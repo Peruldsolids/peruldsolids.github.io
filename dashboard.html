@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Cotizaciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1565C0;
+            --primary-dark: #0D47A1;
+            --primary-light: #2196F3;
+            --accent-color: #FFC107;
+            --text-light: #FFFFFF;
+            --text-dark: #333333;
+            --danger-color: #DC3545;
+            --success-color: #28a745;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        #sidebar {
+            width: 280px;
+            background: var(--primary-color);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        #sidebar .sidebar-header {
+            padding: 25px 20px;
+            background: var(--primary-dark);
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #sidebar .sidebar-header .logo-img {
+            width: 200px;
+            height: 45px;
+            object-fit: contain;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 5px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        #sidebar .sidebar-header .logo-img:hover {
+            transform: scale(1.05);
+        }
+
+        #sidebar .sidebar-header h4 {
+            margin: 15px 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        #sidebar ul.components {
+            padding: 20px 0;
+            flex-grow: 1;
+        }
+
+        #sidebar ul li a {
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        #sidebar ul li a:hover {
+            background: var(--primary-light);
+            border-left-color: var(--accent-color);
+            padding-left: 30px;
+        }
+
+        #sidebar ul li a i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        #sidebar ul li.active > a {
+            background: var(--primary-light);
+            border-left-color: var(--accent-color);
+        }
+
+        .btn-logout {
+            color: var(--text-light) !important;
+            opacity: 0.8;
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-logout:hover {
+            background: var(--danger-color) !important;
+            opacity: 1;
+        }
+
+        #content {
+            width: 100%;
+            background-color: #f8f9fa;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 15px;
+            border-radius: 25px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .user-info:hover {
+            background: #e9ecef;
+        }
+
+        .user-info i {
+            font-size: 1.8em;
+            color: var(--primary-color);
+        }
+
+        #userNameTop {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        iframe {
+            width: 100%;
+            height: calc(100vh - 70px);
+            border: none;
+            background: #f8f9fa;
+        }
+
+        #sidebar .sidebar-footer {
+            padding: 15px;
+            background: var(--primary-dark);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #sidebar .sidebar-footer span {
+            font-weight: 500;
+            color: var(--text-light);
+            display: block;
+            margin-top: 5px;
+        }
+
+        #pageTitle {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 250px;
+                margin-left: -250px;
+            }
+            
+            #sidebar.active {
+                margin-left: 0;
+            }
+        }
+
+        #sidebar.collapsed {
+    width: 70px;
+}
+
+#sidebar.collapsed .sidebar-header {
+    padding: 15px 10px;
+}
+
+#sidebar.collapsed .sidebar-header h4,
+#sidebar.collapsed .sidebar-header #userName,
+#sidebar.collapsed .sidebar-footer,
+#sidebar.collapsed .link_name {
+    display: none;
+}
+
+#sidebar.collapsed .logo-img {
+    width: 40px;
+    height: 40px;
+    padding: 3px;
+}
+
+#sidebar.collapsed ul li a {
+    padding: 15px;
+    justify-content: center;
+}
+
+#sidebar.collapsed ul li a i {
+    margin: 0;
+    font-size: 1.3em;
+}
+
+#sidebarToggle {
+    color: var(--primary-color);
+    font-size: 1.2em;
+    padding: 5px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+#sidebarToggle:hover {
+    background-color: rgba(21, 101, 192, 0.1);
+    transform: scale(1.1);
+}
+
+#sidebar.collapsed ul li a span {
+    display: none;
+}
+
+#sidebar.collapsed ul li {
+    position: relative;
+}
+
+#sidebar.collapsed ul li a:hover::after {
+    content: attr(data-title);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--primary-dark);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-left: 10px;
+}
+
+#content {
+    transition: all 0.3s ease;
+}
+
+#content.expanded {
+    margin-left: 70px;
+}
+    </style>
+</head>
+<!-- El resto del HTML se mantiene igual -->
+</body>
+</html>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <img src="https://i.postimg.cc/Y9ZbjJ4W/lp-soldis.png" alt="Logo" class="logo-img">
+                <h4>Sistema de Cotizaciones</h4>
+                <div id="userName" class="text-light"></div>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li>
+                    <a href="#" onclick="cargarPagina('form.html')" data-ventana="registrar-solicitud" data-title="Registrar Solicitud">
+                        <i class="fas fa-home"></i>
+                        <span class="link_name">Registrar Solicitud</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="cargarPagina('lista-pedidos.html')" data-ventana="solicitudes" data-title="Solicitudes">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="link_name">Solicitudes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" onclick="cargarPagina('pedidos-aprobados.html')" data-ventana="pedidos-aprobados" data-title="Pedidos Aprobados">
+                        <i class="fas fa-check-circle"></i>
+                        <span class="link_name">Pedidos Aprobados</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" onclick="cargarPagina('cotizaciones.html')" data-ventana="cotizaciones" data-title="Cotizaciones">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span class="link_name">Cotizaciones</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="btn-logout" onclick="cerrarSesion()" data-title="Cerrar Sesión">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="link_name">Cerrar Sesión</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                Desarrollado por:<br>
+                <span>C. Villavicencio | LP SOLIDS</span>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+        <div class="top-bar">
+            <div class="d-flex align-items-center">
+                <button id="sidebarToggle" class="btn btn-link me-3">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h5 id="pageTitle">Bienvenido</h5>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span id="userNameTop"></span>
+            </div>
+        </div>
+        <iframe id="contentFrame" src="form.html"></iframe>
+    </div>
+    <script src="permisos.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            
+            // Recuperar el estado del sidebar del localStorage
+            const sidebarState = localStorage.getItem('sidebarState');
+            if (sidebarState === 'collapsed') {
+                sidebar.classList.add('collapsed');
+                content.classList.add('expanded');
+            }
+        
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                content.classList.toggle('expanded');
+                
+                // Guardar el estado en localStorage
+                localStorage.setItem('sidebarState', 
+                    sidebar.classList.contains('collapsed') ? 'collapsed' : 'expanded'
+                );
+            });
+        });
+        </script>
+</body>
+</html>

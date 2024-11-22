@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguimiento de Cotizaciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #1565C0;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1565C0;
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
+        .table thead th {
+            background-color: #1565C0;
+            color: white;
+            font-weight: 500;
+            border: none;
+            padding: 12px;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+            padding: 12px;
+        }
+
+        .btn-group .btn {
+            padding: 6px 12px;
+            margin: 0 2px;
+        }
+
+        /* Estados */
+        .estado-pendiente { 
+            background-color: #fff3cd !important; 
+        }
+        .estado-enviada { 
+            background-color: #cce5ff !important; 
+        }
+        .estado-proceso { 
+            background-color: #fff3cd !important; 
+        }
+        .estado-atendida { 
+            background-color: #d4edda !important; 
+        }
+        .estado-anulada { 
+            background-color: #f8d7da !important; 
+        }
+
+        /* Botones de estado */
+        .btn-outline-primary:hover {
+            background-color: #1565C0;
+            border-color: #1565C0;
+        }
+
+        .btn-outline-warning:hover {
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+
+        .btn-outline-success:hover {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* Formato para montos */
+        .monto {
+            font-family: 'Courier New', Courier, monospace;
+            text-align: right;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+                margin-top: 10px;
+            }
+
+            .table-responsive {
+                border: none;
+            }
+
+            .btn-group .btn {
+                padding: 4px 8px;
+            }
+        }
+
+        /* Agregar al CSS existente */
+        .card {
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #1565C0;
+            box-shadow: 0 0 0 0.2rem rgba(21, 101, 192, 0.25);
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .card-text {
+            margin-bottom: 0;
+            font-weight: 600;
+        }
+
+        #filtroCliente {
+            border-radius: 20px;
+            padding-left: 15px;
+        }
+
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #666;
+        }
+
+        /* Agregar al CSS existente */
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .btn-success:active {
+            transform: translateY(0);
+        }
+
+        .btn-success i {
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sección de Filtros -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Filtros</h5>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha Desde</label>
+                        <input type="date" class="form-control" id="fechaDesde">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha Hasta</label>
+                        <input type="date" class="form-control" id="fechaHasta">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Cliente</label>
+                        <input type="text" class="form-control" id="filtroCliente" placeholder="Buscar cliente...">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select" id="filtroEstado">
+                            <option value="">Todos</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Enviada">Enviada</option>
+                            <option value="En proceso">En proceso</option>
+                            <option value="Atendida">Atendida</option>
+                            <option value="Anulada">Anulada</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Resumen -->
+        <div class="row mb-4">
+            <div class="col-md-2">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Total Cotizaciones</h6>
+                        <h3 class="card-text" id="totalCotizaciones">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Atendidas</h6>
+                        <h3 class="card-text" id="totalAtendidas">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-warning">
+                    <div class="card-body">
+                        <h6 class="card-title">En Proceso</h6>
+                        <h3 class="card-text" id="totalProceso">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-secondary text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Pendientes</h6>
+                        <h3 class="card-text" id="totalPendientes">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Anuladas</h6>
+                        <h3 class="card-text" id="totalAnuladas">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Monto Total</h6>
+                        <h3 class="card-text" id="montoTotal">S/ 0.00</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Título y Tabla (existentes) -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-clipboard-list"></i>
+                Seguimiento de Cotizaciones
+            </h2>
+            <button class="btn btn-success" onclick="exportarExcel()">
+                <i class="fas fa-file-excel me-2"></i>
+                Exportar a Excel
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>ID Cotización</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Solicitante</th>
+                        <th>Total Final</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaSeguimiento">
+                    <!-- Aquí se cargarán dinámicamente las cotizaciones -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="seguimiento.js"></script>
+</body>
+</html>

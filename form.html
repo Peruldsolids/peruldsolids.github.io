@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Pedidos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anaheim&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1565C0;
+            --primary-light: #BBDEFB;
+            --text-color: #1A237E;
+            --border-color: #90CAF9;
+            --hover-color: #0D47A1;
+        }
+
+        body {
+            font-family: 'Anaheim', sans-serif;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-weight: 400;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(21, 101, 192, 0.1);
+            margin-bottom: 2rem;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem;
+        }
+
+        .card-header h4 {
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            color: var(--text-color);
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        select.form-control {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%232196F3' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 2.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(13, 71, 161, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-light);
+            color: var(--hover-color);
+        }
+
+        .item-form {
+            background-color: var(--primary-light);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .preview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .preview-content {
+            background: white;
+            margin: 2rem auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+        }
+
+        .close-button:hover {
+            background-color: var(--primary-light);
+            transform: rotate(90deg);
+        }
+
+        .btn-success {
+            background-color: #2E7D32;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .btn-success:hover {
+            background-color: #1B5E20;
+            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.2);
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .form-label i {
+            color: var(--primary-color);
+        }
+
+        .table {
+            width: 100%;
+            margin-bottom: 1rem;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table th {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            font-weight: 400;
+            text-align: left;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .preview-modal {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="mb-4">Sistema de Pedidos</h2>
+
+        <!-- Formulario 1: Datos Generales -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>Datos Generales</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <!-- Campos ocultos para IDs -->
+            <input type="hidden" id="usuarioId">
+            <input type="hidden" id="empresaId">
+            
+            <!-- Campos autogenerados (readonly) -->
+            <div class="col-md-4 mb-3">
+                <label class="form-label"><i class="fas fa-calendar"></i> Fecha</label>
+                <input type="text" class="form-control" id="fecha" readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label"><i class="fas fa-user"></i> Usuario</label>
+                <input type="text" class="form-control" id="nombreUsuario" readonly>  <!-- Cambiamos id="usuario" por id="nombreUsuario" -->
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label"><i class="fas fa-building"></i> Empresa</label>
+                <input type="text" class="form-control" id="empresa" readonly>
+            </div>
+
+            <!-- Campos editables -->
+            <div class="col-md-4 mb-3">
+                <label class="form-label"><i class="fas fa-industry"></i> Unidad</label>
+                <input type="text" class="form-control" id="unidad" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label"><i class="fas fa-map-marker-alt"></i> Punto de Entrega</label>
+                <input type="text" class="form-control" id="puntoEntrega" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label"><i class="fas fa-clipboard"></i> Detalles</label>
+                <textarea class="form-control" id="detalles" rows="2"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Formulario 2: Items -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4>Items</h4>
+        <button type="button" class="btn btn-secondary" onclick="agregarItem()">
+            <i class="fas fa-plus"></i> Agregar Item
+        </button>
+    </div>
+    <div class="card-body">
+        <div id="itemsContainer">
+            <!-- Los items se agregarán aquí dinámicamente -->
+        </div>
+    </div>
+</div>
+
+<!-- Template para los items (esto se agrega dinámicamente) -->
+<template id="itemTemplate">
+    <div class="item-form mb-3">
+        <div class="row">
+            <div class="col-md-3">
+                <label class="form-label">Categoría</label>
+                <select class="form-control" id="categoria_${index}" required>
+                    <option value="">Seleccione categoría</option>
+                    <!-- Las categorías se cargarán dinámicamente -->
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Item</label>
+                <input type="text" class="form-control" id="item_${index}" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Unidad de Medida</label>
+                <input type="text" class="form-control" id="unidadMedida_${index}" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Cantidad</label>
+                <input type="number" class="form-control" id="cantidad_${index}" min="1" required>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="button" class="btn btn-danger" onclick="eliminarItem(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+        <!-- Botones de acción -->
+        <div class="mb-4">
+            <button type="button" class="btn btn-primary" onclick="mostrarVistaPrevia()">
+                <i class="fas fa-eye"></i> Vista Previa
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Vista Previa -->
+    <div id="previewModal" class="preview-modal">
+        <div class="preview-content">
+            <span class="close-button" onclick="cerrarVistaPrevia()">&times;</span>
+            <h3>Vista Previa del Pedido</h3>
+            <div id="previewContent"></div>
+            <div class="mt-3">
+                <button type="button" class="btn btn-success" onclick="guardarPedido()">
+                    <i class="fas fa-save"></i> Registrar Pedido
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos del usuario
+            const userData = JSON.parse(sessionStorage.getItem('usuario') || '{}');
+            console.log('Datos del usuario:', userData);
+        
+            // Establecer fecha actual
+            const fechaInput = document.getElementById('fecha');
+            if (fechaInput) {
+                const hoy = new Date().toLocaleDateString();
+                fechaInput.value = hoy;
+            }
+        
+            // Establecer datos del usuario
+            const nombreUsuarioInput = document.getElementById('nombreUsuario');
+            const empresaInput = document.getElementById('empresa');
+            const usuarioIdInput = document.getElementById('usuarioId');
+            const empresaIdInput = document.getElementById('empresaId');
+        
+            if (userData) {
+                if (nombreUsuarioInput) {
+                    nombreUsuarioInput.value = userData.usuario || 'No definido';
+                } else {
+                    console.error('Campo nombreUsuario no encontrado');
+                }
+                if (empresaInput) {
+                    empresaInput.value = userData.empresa || 'No definido';
+                }
+                if (usuarioIdInput) {
+                    usuarioIdInput.value = userData.id || '';
+                }
+                if (empresaIdInput) {
+                    empresaIdInput.value = userData.empresaId || '';
+                }
+            }
+        });
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+
+</body>
+</html>
